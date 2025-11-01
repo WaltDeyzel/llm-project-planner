@@ -39,15 +39,19 @@ We can envision a multi-agent system to handle the different aspects of this pro
         *   Injury reports (pain level, location).
     *   **`FoodLog`:** A log of meals and snacks.
 *   **Data Schema:** *Action Item: Define a structured format (e.g., JSON schema) for storing this data.*
+*   **Shared Knowledge Base / Data Bus:** *Action Item: Define a mechanism for agents to access and share information beyond direct input/output passing, such as a message queue or a centralized datastore.*
+*   **Cross-Agent Data Models:** *Action Item: Explicitly document clear data models for all information passed between agents (e.g., `TrainingPlan` object structure, `NutritionalAdvice` format).*
 
 ## 5. High-Level Orchestration
 
-1.  User provides their goal (e.g., "run a half-marathon in 3 months").
-2.  `OrchestratorAgent` tasks the `TrainingPlannerAgent` to create a plan.
-3.  User logs their runs, and Garmin data is synced.
-4.  `DataAnalysisAgent` processes the new data and flags any interesting trends or deviations.
-5.  User asks, "What should I eat after my long run?"
-6.  `OrchestratorAgent` routes the query to the `NutritionistAgent`.
-7.  `NutritionistAgent` provides a recommendation based on the user's recent activity.
+To manage complexity and distribute the coordination load, we will introduce the concept of **Sub-Orchestrators**. The main `OrchestratorAgent` will delegate high-level tasks to these specialized sub-orchestrators, which will then manage their respective domains.
 
-This is a starting point. We can now begin to flesh out each of these sections in more detail. What would you like to focus on first? For example, we could start by defining the `TrainingPlannerAgent` in more detail.
+1.  User provides their goal (e.g., "run a half-marathon in 3 months").
+2.  Main `OrchestratorAgent` tasks a relevant **Sub-Orchestrator** (e.g., `TrainingOrchestratorAgent`, `NutritionOrchestratorAgent`, `InjuryOrchestratorAgent`) to manage the request.
+3.  User logs their runs, and Garmin data is synced. This data is processed by `DataAnalysisAgent` and stored in the Shared Knowledge Base.
+4.  `DataAnalysisAgent` processes new data from the Shared Knowledge Base and flags any interesting trends or deviations, updating the Shared Knowledge Base.
+5.  User asks, "What should I eat after my long run?"
+6.  Main `OrchestratorAgent` routes the query to the `NutritionOrchestratorAgent`, providing relevant context from the Shared Knowledge Base.
+7.  `NutritionOrchestratorAgent` delegates to `NutritionistAgent` to provide a recommendation based on the user's recent activity and data from the Shared Knowledge Base.
+
+This refined orchestration aims to distribute the coordination load and enhance scalability. We have now defined `TrainingOrchestratorAgent`, `NutritionOrchestratorAgent`, and `InjuryOrchestratorAgent` as examples of sub-orchestrators.

@@ -10,10 +10,22 @@ To act as the central coordinator of the multi-agent system. It receives request
 
 ## 3. Capabilities
 
-*   **Task Delegation:** Receive inputs from the `UserInteractionAgent` and `DataAnalysisAgent` and route them to the correct specialist agent (e.g., a nutrition question goes to the `NutritionistAgent`).
-*   **State Management:** Maintain a high-level understanding of the user's current state, goals, and recent interactions.
-*   **Agent Coordination:** Synthesize information from multiple agents to fulfill complex requests. For example, to generate a daily briefing, it would query the `TrainingPlannerAgent` for the day's workout, the `NutritionistAgent` for post-workout meal advice, and the `DataAnalysisAgent` for a summary of last night's sleep.
-*   **Priority Management:** Handle alerts and warnings (e.g., `InjuryWarning`, `DataAlert`) and determine the appropriate course of action.
+*   **High-Level Task Delegation:** Receive inputs from the `UserInteractionAgent` and `DataAnalysisAgent` and route them to the appropriate **Sub-Orchestrator** (e.g., `TrainingOrchestratorAgent`, `NutritionOrchestratorAgent`, `InjuryOrchestratorAgent`) or specialist agent if no sub-orchestrator exists for that domain.
+*   **Global State Management:** Maintain a high-level understanding of the user's overall state, goals, and recent interactions across all domains.
+*   **System-Wide Agent Coordination:** Synthesize information from multiple sub-orchestrators and specialist agents to fulfill complex, cross-domain requests. For example, to generate a daily briefing, it would query the `TrainingOrchestratorAgent` for the day's workout, the `NutritionOrchestratorAgent` for post-workout meal advice, and the `DataAnalysisAgent` for a summary of last night's sleep.
+*   **Global Priority Management:** Handle system-wide alerts and warnings (e.g., `InjuryWarning`, `DataAlert`) and determine the appropriate course of action, potentially involving multiple sub-orchestrators.
+
+### Decision/Delegation Criteria
+
+The `OrchestratorAgent` uses the following criteria to decide which sub-orchestrator or specialist agent to delegate tasks to and how to prioritize actions:
+
+1.  **Intent Recognition:** Analyze user requests (from `UserInteractionAgent`) to identify the primary intent (e.g., "get training plan," "ask nutrition question," "report injury").
+2.  **Domain Mapping:** Map the identified intent to the appropriate sub-orchestrator (e.g., training intents -> `TrainingOrchestratorAgent`, nutrition intents -> `NutritionOrchestratorAgent`, injury intents -> `InjuryOrchestratorAgent`) or specialist agent if no sub-orchestrator exists for that domain.
+3.  **Contextual Relevance:** Consider the current user state, recent activities, and goals to determine the most relevant sub-orchestrator or specialist agent.
+4.  **Data Availability:** Check if necessary data is available (e.g., from `DataAnalysisAgent` or Shared Knowledge Base) before delegating a task that requires it.
+5.  **Alert Priority:** Prioritize critical alerts (e.g., `InjuryWarning`, `DataAlert` indicating overtraining) over routine requests, routing them to the relevant sub-orchestrator or specialist.
+6.  **Sequential Dependencies:** Understand and manage the order of operations when a request requires input from multiple sub-orchestrators or agents in sequence.
+7.  **Load Balancing (Future Consideration):** In a high-volume scenario, consider distributing tasks among multiple instances of sub-orchestrators or specialist agents.
 
 ## 4. Inputs
 
