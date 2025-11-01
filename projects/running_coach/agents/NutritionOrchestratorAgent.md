@@ -17,19 +17,19 @@ To act as a specialized sub-orchestrator responsible for coordinating all nutrit
 
 ## 4. Inputs
 
-*   **High-Level Nutrition Directives from `OrchestratorAgent`:** (e.g., "provide post-run meal advice," "analyze weekly food log").
-*   **`FoodLog` from `UserInteractionAgent` (via `OrchestratorAgent`):** User's daily food and drink intake.
+*   **`High-Level Nutrition Directives` (from Data Bus):** Commands from the main `OrchestratorAgent`.
+*   **`FoodLog` (from Data Bus):** User's daily food and drink intake, published by `UserInteractionAgent`.
 *   **`TrainingPlan` (from Shared Knowledge Base):** To understand the user's current and upcoming training load.
-*   **User Profile (from Shared Knowledge Base):** User's dietary preferences/restrictions.
+*   **`User Profile` (from Shared Knowledge Base):** User's dietary preferences/restrictions.
 
 ## 5. Outputs
 
-*   **Tasks for `NutritionistAgent`:** Specific commands or queries for the specialist nutrition agent.
-*   **`NutritionalStatusReport` to `OrchestratorAgent`:** Summaries of dietary adherence, recommendations provided, or critical alerts.
-*   **`NutritionalAdvice`:** The generated dietary recommendations (ultimately passed to `UserInteractionAgent` via `OrchestratorAgent`).
+*   **`DelegationCommands` (to Data Bus):** Specific commands or queries published for the `NutritionistAgent`.
+*   **`NutritionalStatusReport` (to Data Bus):** Summaries of dietary adherence, recommendations provided, or critical alerts, published for the main `OrchestratorAgent`.
+*   **`NutritionalAdvice` (to Data Bus):** The generated dietary recommendations, published to the Shared Knowledge Base.
 
 ## 6. Dependencies
 
-*   **`OrchestratorAgent`:** Receives directives from and reports to the main orchestrator.
-*   **`NutritionistAgent`:** For core nutrition advice logic.
-*   **Shared Knowledge Base / Data Bus:** To access `TrainingPlan` and `User Profile` data, and to store processed `FoodLog` data.
+*   **Data Bus / Shared Knowledge Base:** For all communication and state management.
+*   **`OrchestratorAgent`:** (Indirectly, receives directives from and reports to the main orchestrator via the Data Bus).
+*   **`NutritionistAgent`:** (Indirectly, for core nutrition advice logic, interacting via Data Bus).

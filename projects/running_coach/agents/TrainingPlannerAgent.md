@@ -23,19 +23,21 @@ To create, manage, and dynamically adapt personalized running training plans bas
 
 ## 4. Inputs
 
-*   **User Goals:** Target race distance, goal time, race date.
-*   **User Fitness Level:** Current weekly mileage, recent race times, self-assessed fitness level.
-*   **Analysis from `DataAnalysisAgent`:** Summaries of recent performance, fatigue warnings, progress trends.
-*   **Feedback from `UserInteractionAgent`:** User's subjective feelings, reports of missed workouts.
+*   **`TrainingDirectives` (from Data Bus):** Specific commands or queries from `TrainingOrchestratorAgent`.
+*   **`UserGoals` (from Shared Knowledge Base):** Target race distance, goal time, race date.
+*   **`UserFitnessLevel` (from Shared Knowledge Base):** Current weekly mileage, recent race times, self-assessed fitness level.
+*   **`AnalysisSummary` (from Data Bus):** Summaries of recent performance, fatigue warnings, progress trends, published by `DataAnalysisAgent`.
+*   **`UserFeedback` (from Data Bus):** User's subjective feelings, reports of missed workouts, published by `UserInteractionAgent`.
 
 ## 5. Outputs
 
-*   **`TrainingPlan`:** A structured data object (e.g., JSON) representing the full training plan, including daily workouts.
-*   **`WorkoutModification`:** A notification and updated workout details when the plan is adjusted.
-*   **Queries to other agents:** Requests for information (e.g., asking the `DataAnalysisAgent` for the user's current 5k PR).
+*   **`TrainingPlan` (to Data Bus):** A structured data object representing the full training plan, published to the Shared Knowledge Base.
+*   **`WorkoutModification` (to Data Bus):** A notification and updated workout details, published to the Data Bus.
+*   **`QueriesToDataAnalysis` (to Data Bus):** Requests for specific data points or analysis from `DataAnalysisAgent`.
 
 ## 6. Dependencies
 
-*   **`DataAnalysisAgent`:** To receive performance data and analysis.
-*   **`UserInteractionAgent`:** To receive user feedback and goals.
-*   **`OrchestratorAgent`:** To receive high-level directives and report plan creation/modification.
+*   **Data Bus / Shared Knowledge Base:** For all communication and state management.
+*   **`TrainingOrchestratorAgent`:** (Indirectly, as it receives requests from and publishes results for the sub-orchestrator via the Data Bus).
+*   **`DataAnalysisAgent`:** (Indirectly, to receive performance data and analysis, interacting via Data Bus).
+*   **`UserInteractionAgent`:** (Indirectly, to receive user feedback and goals, interacting via Data Bus).

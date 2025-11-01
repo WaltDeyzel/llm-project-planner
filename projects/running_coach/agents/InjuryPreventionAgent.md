@@ -19,19 +19,21 @@ To help the user prevent and manage common running-related injuries by providing
 
 ## 4. Inputs
 
-*   **`AnalysisSummary` and `DataAlerts` from `DataAnalysisAgent`:** To identify sudden changes in training load.
-*   **`DailyJournal` from user:** To get reports of pain, soreness, or discomfort.
-*   **Queries from `UserInteractionAgent`:** Specific questions from the user about an injury.
+*   **`AnalysisSummary` and `DataAlerts` (from Data Bus):** Data indicating sudden changes in training load, published by `DataAnalysisAgent`.
+*   **`DailyJournal` (from Data Bus):** User reports of pain, soreness, or discomfort, published by `UserInteractionAgent`.
+*   **`InjuryAssessmentRequests` (from Data Bus):** Specific queries from `InjuryOrchestratorAgent`.
+*   **`TrainingPlan` (from Shared Knowledge Base):** Current training plan data.
 
 ## 5. Outputs
 
-*   **`InjuryWarning`:** An alert sent to the `OrchestratorAgent` when a high injury risk is detected.
-*   **`RehabPlan`:** A set of recommended exercises and actions for the user.
-*   **`InformationalContent`:** Articles or videos about specific injuries.
+*   **`InjuryWarning` (to Data Bus):** An alert published when a high injury risk is detected.
+*   **`RehabPlan` (to Data Bus):** A set of recommended exercises and actions, published to the Shared Knowledge Base.
+*   **`InformationalContent` (to Data Bus):** Articles or videos about specific injuries, published for `UserInteractionAgent`.
 
 ## 6. Dependencies
 
-*   **`DataAnalysisAgent`:** For data-driven risk assessment.
-*   **`UserInteractionAgent`:** To communicate with the user.
-*   **`TrainingPlannerAgent`:** To suggest modifications to the training plan.
+*   **Data Bus / Shared Knowledge Base:** For all communication and state management.
+*   **`InjuryOrchestratorAgent`:** (Indirectly, as it receives requests from and publishes results for the sub-orchestrator via the Data Bus).
+*   **`DataAnalysisAgent`:** (Indirectly, for data-driven risk assessment, interacting via Data Bus).
+*   **`TrainingPlannerAgent`:** (Indirectly, to suggest modifications to the training plan, interacting via Data Bus).
 *   **`StrengthCoachAgent`:** To request and coordinate rehab exercises.

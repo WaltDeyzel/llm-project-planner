@@ -29,15 +29,18 @@ The `OrchestratorAgent` uses the following criteria to decide which sub-orchestr
 
 ## 4. Inputs
 
-*   **Formatted User Requests from `UserInteractionAgent`:** The primary driver of action.
-*   **`AnalysisSummary` and `DataAlerts` from `DataAnalysisAgent`:** Proactive triggers for action.
-*   **Outputs from all other agents:** Information to be synthesized or passed to other agents.
+*   **`UserRequests` (from Data Bus):** Formatted user requests published by the `UserInteractionAgent`.
+*   **`AnalysisSummaries` and `DataAlerts` (from Data Bus):** Proactive triggers published by the `DataAnalysisAgent`.
+*   **`SubOrchestratorReports` (from Data Bus):** Summaries and alerts published by sub-orchestrators (e.g., `TrainingOrchestratorAgent`).
 
 ## 5. Outputs
 
-*   **Tasks for specialist agents:** Specific commands or queries for each agent (e.g., "`TrainingPlannerAgent`, generate a 12-week marathon plan").
-*   **Synthesized responses:** Cohesive answers to be sent to the `UserInteractionAgent` for presentation to the user.
+*   **`DelegationCommands` (to Data Bus):** Specific commands or queries published to sub-orchestrators or specialist agents.
+*   **`SynthesizedResponses` (to Data Bus):** Cohesive answers published for the `UserInteractionAgent` to present to the user.
 
 ## 6. Dependencies
 
-*   This agent is the central hub and is connected to all other agents in the system.
+*   **Data Bus / Shared Knowledge Base:** For all communication and state management.
+*   **`UserInteractionAgent`:** (Indirectly, as it publishes user requests to the Data Bus).
+*   **`DataAnalysisAgent`:** (Indirectly, as it publishes analysis results to the Data Bus).
+*   **Sub-Orchestrators (e.g., `TrainingOrchestratorAgent`, `NutritionOrchestratorAgent`, `InjuryOrchestratorAgent`):** (Indirectly, as it delegates to them via the Data Bus and receives reports from them via the Data Bus).

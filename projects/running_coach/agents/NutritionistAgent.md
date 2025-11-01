@@ -18,19 +18,20 @@ To provide personalized nutrition and hydration advice to support the user's run
 
 ## 4. Inputs
 
-*   **`TrainingPlan` from `TrainingPlannerAgent`:** To understand the user's current and upcoming training load.
-*   **`FoodLog` from user:** A record of the user's daily food and drink intake.
-*   **User Profile:** User's age, weight, height, and dietary preferences/restrictions.
-*   **Queries from `UserInteractionAgent`:** Specific questions from the user about nutrition (e.g., "what should I eat before a long run?").
+*   **`NutritionDirectives` (from Data Bus):** Specific commands or queries from `NutritionOrchestratorAgent`.
+*   **`FoodLog` (from Data Bus):** User's daily food and drink intake, published by `UserInteractionAgent`.
+*   **`TrainingPlan` (from Shared Knowledge Base):** To understand the user's current and upcoming training load.
+*   **`User Profile` (from Shared Knowledge Base):** User's age, weight, height, and dietary preferences/restrictions.
+*   **`PerformanceTrends` (from Shared Knowledge Base):** Data from `DataAnalysisAgent` to correlate nutrition with performance.
 
 ## 5. Outputs
 
-*   **`NutritionalAdvice`:** Specific recommendations for meals, snacks, or hydration strategies.
-*   **`FoodLogFeedback`:** Analysis and feedback on the user's logged food intake.
-*   **`ShoppingList`:** A suggested shopping list based on recommended meals.
+*   **`NutritionalAdvice` (to Data Bus):** Specific recommendations for meals, snacks, or hydration strategies, published to the Shared Knowledge Base.
+*   **`FoodLogFeedback` (to Data Bus):** Analysis and feedback on the user's logged food intake, published to the Shared Knowledge Base.
+*   **`ShoppingList` (to Data Bus):** A suggested shopping list based on recommended meals, published to the Shared Knowledge Base.
 
 ## 6. Dependencies
 
-*   **`TrainingPlannerAgent`:** To get training load information.
-*   **`UserInteractionAgent`:** To answer user questions and receive food logs.
-*   **`DataAnalysisAgent`:** To correlate nutrition with performance trends (e.g., "user reports low energy on days with low carb intake").
+*   **Data Bus / Shared Knowledge Base:** For all communication and state management.
+*   **`NutritionOrchestratorAgent`:** (Indirectly, as it receives requests from and publishes results for the sub-orchestrator via the Data Bus).
+*   **`DataAnalysisAgent`:** (Indirectly, to correlate nutrition with performance trends, interacting via Data Bus).

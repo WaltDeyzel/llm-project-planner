@@ -19,16 +19,16 @@ To ingest, process, and analyze all quantitative and qualitative data to identif
 
 ## 4. Inputs
 
-*   **Garmin Data:** Raw data from the Garmin API.
-*   **User Logs:** `DailyJournal` and `FoodLog` data.
-*   **`TrainingPlan`:** To compare planned vs. actual workouts.
+*   **`RawGarminData` (from Data Bus):** Raw data from the Garmin API, published by a dedicated ingestion service.
+*   **`UserLogs` (from Data Bus):** `DailyJournal` and `FoodLog` data, published by `UserInteractionAgent`.
+*   **`TrainingPlan` (from Shared Knowledge Base):** To compare planned vs. actual workouts.
 
 ## 5. Outputs
 
-*   **`AnalysisSummary`:** A summary of key findings and trends provided to the `OrchestratorAgent`.
-*   **`DataAlert`:** A specific alert triggered by an anomaly (e.g., "Heart rate was unusually high on the last run").
-*   **Responses to Queries:** Specific data points or analysis in response to queries from other agents (e.g., "What was the user's average cadence over the last month?").
+*   **`AnalysisSummary` (to Data Bus):** A summary of key findings and trends, published for relevant agents (e.g., `OrchestratorAgent`, sub-orchestrators).
+*   **`DataAlert` (to Data Bus):** A specific alert triggered by an anomaly, published for relevant agents.
+*   **`ProcessedData` (to Shared Knowledge Base):** Cleaned and structured data (e.g., processed Garmin activities, correlated metrics) stored for other agents to query.
 
 ## 6. Dependencies
 
-*   This is a foundational agent that many other agents depend on for data-driven insights.
+*   **Data Bus / Shared Knowledge Base:** For all data ingestion, output publishing, and querying of shared state.

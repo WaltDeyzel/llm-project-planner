@@ -33,25 +33,29 @@ We can envision a multi-agent system to handle the different aspects of this pro
     *   Stress levels.
     *   *Action Item:* Research and document the process for Garmin data integration (e.g., via API).
 *   **User-Provided Data:**
-    *   **`DailyJournal`:** A simple log for the user to record:
-        *   Subjective feeling (energy levels, mood).
-        *   Muscle soreness.
-        *   Injury reports (pain level, location).
-    *   **`FoodLog`:** A log of meals and snacks.
-*   **Data Schema:** *Action Item: Define a structured format (e.g., JSON schema) for storing this data.*
-*   **Shared Knowledge Base / Data Bus:** *Action Item: Define a mechanism for agents to access and share information beyond direct input/output passing, such as a message queue or a centralized datastore.*
-*   **Cross-Agent Data Models:** *Action Item: Explicitly document clear data models for all information passed between agents (e.g., `TrainingPlan` object structure, `NutritionalAdvice` format).*
+    *   **`DailyJournal`:** Structured subjective feedback. See `projects/running_coach/data/DailyJournal.json` for schema.
+    *   **`FoodLog`:** Structured food intake and related subjective experiences. See `projects/running_coach/data/FoodLog.json` for schema.
+*   **Cross-Agent Data Models:** All data published to and consumed from the Data Bus will adhere to formalized JSON schemas. These will be defined in the `projects/running_coach/data/` directory as needed (e.g., `TrainingPlan.json`, `NutritionalAdvice.json`).
 
-## 5. High-Level Orchestration
+## 5. Data Bus / Shared Knowledge Base Design
 
-To manage complexity and distribute the coordination load, we will introduce the concept of **Sub-Orchestrators**. The main `OrchestratorAgent` will delegate high-level tasks to these specialized sub-orchestrators, which will then manage their respective domains.
+To facilitate efficient, decoupled, and scalable data exchange, the project will utilize a **Data Bus / Shared Knowledge Base**. This central hub will allow agents to publish data, subscribe to relevant events, and query for current state information without direct point-to-point dependencies.
 
-1.  User provides their goal (e.g., "run a half-marathon in 3 months").
-2.  Main `OrchestratorAgent` tasks a relevant **Sub-Orchestrator** (e.g., `TrainingOrchestratorAgent`, `NutritionOrchestratorAgent`, `InjuryOrchestratorAgent`) to manage the request.
-3.  User logs their runs, and Garmin data is synced. This data is processed by `DataAnalysisAgent` and stored in the Shared Knowledge Base.
-4.  `DataAnalysisAgent` processes new data from the Shared Knowledge Base and flags any interesting trends or deviations, updating the Shared Knowledge Base.
-5.  User asks, "What should I eat after my long run?"
-6.  Main `OrchestratorAgent` routes the query to the `NutritionOrchestratorAgent`, providing relevant context from the Shared Knowledge Base.
-7.  `NutritionOrchestratorAgent` delegates to `NutritionistAgent` to provide a recommendation based on the user's recent activity and data from the Shared Knowledge Base.
+### High-Level Design Principles:
 
-This refined orchestration aims to distribute the coordination load and enhance scalability. We have now defined `TrainingOrchestratorAgent`, `NutritionOrchestratorAgent`, and `InjuryOrchestratorAgent` as examples of sub-orchestrators.
+Based on best practices for multi-agent systems and event-driven architectures:
+
+*   **Event-Driven Communication:** Agents will primarily communicate by publishing events (e.g., `RunCompletedEvent`, `InjuryReportedEvent`) to the Data Bus and subscribing to events relevant to their responsibilities. This promotes loose coupling and real-time responsiveness.
+*   **Centralized, Accessible State (Shared Knowledge Base):** Key project data (e.g., `TrainingPlan`, `User Profile`, `AnalysisSummary`, `HistoricalRunData`) will be stored in and accessible via the Shared Knowledge Base component of the bus. This ensures all agents operate on consistent, up-to-date information.
+*   **Decoupling:** Agents will interact with the bus, not directly with each other, significantly reducing inter-agent dependencies and simplifying system evolution.
+*   **Scalability & Resilience:** The chosen implementation will support high throughput, easy scaling, and provide mechanisms for fault tolerance and recovery (e.g., immutable event logs).
+*   **Asynchronous Processing:** Agents can work in parallel, reacting to events as they occur, improving overall system performance.
+*   **Clear Data Contracts:** All data published to and consumed from the bus will adhere to formalized Cross-Agent Data Models (JSON schemas) to ensure consistency and prevent misinterpretation.
+
+### Proposed Implementation (Action Item):
+
+*   *Action Item: Research and select a specific technology for the Data Bus (e.g., Apache Kafka for event streaming, Redis Pub/Sub for real-time events, a dedicated message queue, or a combination). Consider its capabilities for event sourcing, streaming, and knowledge graph integration.*
+*   *Action Item: Define the topics/channels for key data types (e.g., `user_events`, `training_updates`, `analysis_results`, `alerts`, `commands`).*
+*   *Action Item: Formalize the Cross-Agent Data Models (JSON schemas) for all data published to and consumed from the bus, ensuring clear data contracts.*
+
+## 6. High-Level Orchestration

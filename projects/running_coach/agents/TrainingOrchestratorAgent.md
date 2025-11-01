@@ -18,20 +18,23 @@ To act as a specialized sub-orchestrator responsible for coordinating all traini
 
 ## 4. Inputs
 
-*   **High-Level Training Directives from `OrchestratorAgent`:** (e.g., "create marathon plan," "adjust weekly mileage").
-*   **`AnalysisSummary` and `DataAlerts` (training-specific) from `DataAnalysisAgent`:** Performance data relevant to training.
-*   **User Feedback (training-specific) from `UserInteractionAgent` (via `OrchestratorAgent`):** Reports on workouts, fatigue, etc.
+*   **`High-Level Training Directives` (from Data Bus):** Commands from the main `OrchestratorAgent`.
+*   **`AnalysisSummary` and `DataAlerts` (training-specific, from Data Bus):** Performance data relevant to training, published by `DataAnalysisAgent`.
+*   **`UserFeedback` (training-specific, from Data Bus):** Reports on workouts, fatigue, etc., published by `UserInteractionAgent`.
+*   **`TrainingPlan` (from Shared Knowledge Base):** Current training plan data.
+*   **`User Profile` (from Shared Knowledge Base):** User's fitness level, goals, etc.
 
 ## 5. Outputs
 
-*   **Tasks for Specialist Training Agents:** (e.g., to `TrainingPlannerAgent`, `StrengthCoachAgent`, `InjuryPreventionAgent`).
-*   **`TrainingStatusReport` to `OrchestratorAgent`:** Summaries of training progress, plan changes, or critical alerts.
-*   **`TrainingPlan`:** The generated or adapted training plan (ultimately passed to `UserInteractionAgent` via `OrchestratorAgent`).
+*   **`DelegationCommands` (to Data Bus):** Specific commands or queries published for specialist training agents (e.g., `TrainingPlannerAgent`, `StrengthCoachAgent`, `InjuryPreventionAgent`).
+*   **`TrainingStatusReport` (to Data Bus):** Summaries of training progress, plan changes, or critical alerts, published for the main `OrchestratorAgent`.
+*   **`TrainingPlan` (to Data Bus):** The generated or adapted training plan, published to the Shared Knowledge Base.
 
 ## 6. Dependencies
 
-*   **`OrchestratorAgent`:** Receives directives from and reports to the main orchestrator.
-*   **`TrainingPlannerAgent`:** For core training plan logic.
-*   **`StrengthCoachAgent`:** For strength training integration.
-*   **`InjuryPreventionAgent`:** For injury-related assessments and recommendations.
-*   **`DataAnalysisAgent`:** For training-relevant data insights.
+*   **Data Bus / Shared Knowledge Base:** For all communication and state management.
+*   **`OrchestratorAgent`:** (Indirectly, as it sends directives to and receives reports from the main orchestrator via the Data Bus).
+*   **`TrainingPlannerAgent`:** (Indirectly, for core training plan logic, interacting via Data Bus).
+*   **`StrengthCoachAgent`:** (Indirectly, for strength training integration, interacting via Data Bus).
+*   **`InjuryPreventionAgent`:** (Indirectly, for injury-related assessments and recommendations, interacting via Data Bus).
+*   **`DataAnalysisAgent`:** (Indirectly, for training-relevant data insights, interacting via Data Bus).

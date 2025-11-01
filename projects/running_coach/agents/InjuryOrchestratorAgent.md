@@ -18,19 +18,20 @@ To act as a specialized sub-orchestrator responsible for coordinating all injury
 
 ## 4. Inputs
 
-*   **High-Level Injury Directives from `OrchestratorAgent`:** (e.g., "assess injury risk," "provide rehab exercises").
-*   **`DailyJournal` (injury-related) from `UserInteractionAgent` (via `OrchestratorAgent`):** User reports of pain, soreness, or discomfort.
-*   **`AnalysisSummary` and `DataAlerts` (injury-related) from `DataAnalysisAgent`:** Data indicating potential injury risks (e.g., sudden training load spikes).
+*   **`High-Level Injury Directives` (from Data Bus):** Commands from the main `OrchestratorAgent`.
+*   **`DailyJournal` (injury-related, from Data Bus):** User reports of pain, soreness, or discomfort, published by `UserInteractionAgent`.
+*   **`AnalysisSummary` and `DataAlerts` (injury-related, from Data Bus):** Data indicating potential injury risks, published by `DataAnalysisAgent`.
+*   **`TrainingPlan` (from Shared Knowledge Base):** Current training plan data.
 
 ## 5. Outputs
 
-*   **Tasks for `InjuryPreventionAgent`:** Specific commands or queries for the specialist injury agent.
-*   **`InjuryStatusReport` to `OrchestratorAgent`:** Summaries of injury risk, recommendations provided, or critical warnings.
-*   **`RehabPlan`:** The generated rehabilitative or preventative routines (ultimately passed to `UserInteractionAgent` via `OrchestratorAgent`).
+*   **`DelegationCommands` (to Data Bus):** Specific commands or queries published for the `InjuryPreventionAgent`.
+*   **`InjuryStatusReport` (to Data Bus):** Summaries of injury risk, recommendations provided, or critical warnings, published for the main `OrchestratorAgent`.
+*   **`RehabPlan` (to Data Bus):** The generated rehabilitative or preventative routines, published to the Shared Knowledge Base.
 
 ## 6. Dependencies
 
-*   **`OrchestratorAgent`:** Receives directives from and reports to the main orchestrator.
-*   **`InjuryPreventionAgent`:** For core injury prevention and management logic.
-*   **`DataAnalysisAgent`:** For injury-relevant data insights.
-*   **Shared Knowledge Base / Data Bus:** To access relevant user data and training plans.
+*   **Data Bus / Shared Knowledge Base:** For all communication and state management.
+*   **`OrchestratorAgent`:** (Indirectly, receives directives from and reports to the main orchestrator via the Data Bus).
+*   **`InjuryPreventionAgent`:** (Indirectly, for core injury prevention and management logic, interacting via Data Bus).
+*   **`DataAnalysisAgent`:** (Indirectly, for injury-relevant data insights, interacting via Data Bus).

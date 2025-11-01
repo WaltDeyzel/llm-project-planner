@@ -18,16 +18,17 @@ To serve as the primary interface between the user and the AI coaching system, m
 
 ## 4. Inputs
 
-*   **User Messages:** Text or voice input from the user.
-*   **Outputs from other agents:** Information to be presented to the user (e.g., `TrainingPlan`, `NutritionalAdvice`).
+*   **`UserMessages` (from User Interface):** Text or voice input from the user.
+*   **`InformationToPresent` (from Data Bus):** Outputs from other agents (e.g., `TrainingPlan`, `NutritionalAdvice`, `RehabPlan`) published for user consumption.
 
 ## 5. Outputs
 
-*   **Formatted User Requests:** Structured requests sent to the `OrchestratorAgent` (e.g., `{ intent: 'get_workout', date: 'today' }`).
-*   **User-Facing Messages:** Text, charts, and other UI elements to display to the user.
-*   **`DailyJournal` and `FoodLog` entries:** User-provided data to be stored.
+*   **`FormattedUserRequests` (to Data Bus):** Structured requests published for the `OrchestratorAgent`.
+*   **`UserFacingMessages` (to User Interface):** Text, charts, and other UI elements to display to the user.
+*   **`DailyJournalEntries` and `FoodLogEntries` (to Data Bus):** User-provided data published for `DataAnalysisAgent` and relevant orchestrators.
 
 ## 6. Dependencies
 
-*   **`OrchestratorAgent`:** To send user requests and receive information to present.
-*   All other agents (indirectly) as it is the conduit for information flow to the user.
+*   **Data Bus / Shared Knowledge Base:** For publishing user requests and consuming information to present.
+*   **User Interface:** The external system through which the user interacts.
+*   **`OrchestratorAgent`:** (Indirectly, as it consumes formatted user requests from the Data Bus and publishes synthesized responses to the Data Bus).
